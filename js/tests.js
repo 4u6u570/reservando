@@ -1,6 +1,6 @@
 const expect = chai.expect;
 
-describe ("Restaurantes", function(){
+describe("Tests", function(){
     describe("Reservar Horario", function(){
 
         let restaurante;
@@ -19,41 +19,67 @@ describe ("Restaurantes", function(){
             expect(horarios).to.not.have.length(horariosCheck.length);
 
         
-        })
+        })    
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-    
-
-            it("Cuando se reserva un horario que el restaurant no posee, el arreglo se mantiene igual.", function(){
+        it("Cuando se reserva un horario que el restaurant no posee, el arreglo se mantiene igual.", function(){
                 
-                let reservas = horariosCheck[0];
-                restaurante.reservarHorario(reservas);
-                expect(horarios).to.not.have.length(horariosCheck.length);
+            restaurante.reservarHorario("22:22");
+            expect(horarios).to.have.length(horariosCheck.length);
+    
+            })
+
+
+        it("Cuando se intenta reservar un horario pero no se le pasa ningún parámetro a la función, el arreglo se mantiene igual.", function(){
+                
+            restaurante.reservarHorario("");
+            expect(horarios).to.have.length(horariosCheck.length);
     
             
             })
 
+        it("la cantidad de elementos del arreglo disminuya o no según corresponda.", function(){
+            restaurante.reservarHorario();
+            expect(horarios).to.eql(horariosCheck);
+    
+            
+            })
+    
 
-            it("Cuando se intenta reservar un horario pero no se le pasa ningún parámetro a la función, el arreglo se mantiene igual.", function(){
+
+    describe("Obtener Puntuación", function(){
+        var restaurante;
+        var promedioOriginal;
+
+        beforeEach(function(){
+            restaurante = listaPrueba().restaurantes[0];
+        }) 
+        it("Dado un restaurant con determinadas calificaciones, la puntuación (que es el promedio de ellas) se calcula correctamente.", function(){
+            
+            
+            let promedioControl;
+            let calificacionesControl = restaurante.calificaciones.slice();
+            
+            promedioControl = calificacionesControl.reduce((anterior, actual) => actual += anterior) / calificacionesControl.length;
+
+            promedioOriginal = restaurante.obtenerPuntuacion();
+
+            expect(promedioOriginal).to.be.equal(promedioControl);
+        
+        })    
+
+        it("Dado un restaurant que no tiene ninguna calificación, la puntuación es igual a 0.", function(){
                 
-                let reservas = horariosCheck[0];
-                restaurante.reservarHorario(reservas);
-                expect(horarios).to.not.have.length(horariosCheck.length);
+        restaurante.calificaciones = [];
+        promedioOriginal = restaurante.obtenerPuntuacion();
+
+        expect(promedioOriginal).to.be.equal(0);
     
             
             })
 
-            it("la cantidad de elementos del arreglo disminuya o no según corresponda.", function(){
-                
-                let reservas = horariosCheck[0];
-                restaurante.reservarHorario(reservas);
-                expect(horarios).to.not.have.length(horariosCheck.length);
-    
-            
-            })
     })
 
-
+   })
 })
 
 
