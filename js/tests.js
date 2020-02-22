@@ -1,87 +1,181 @@
 const expect = chai.expect;
 
-describe("Tests", function(){
-    describe("Reservar Horario", function(){
+describe("Tests de Restarurantes", function () {
+    describe("Reservar Horario", function () {
 
         let restaurante;
         let horarios;
         let horariosCheck;
 
-        beforeEach(function(){
+        beforeEach(function () {
             restaurante = listaPrueba().restaurantes[0];
-            horarios = restaurante.horarios;
             horariosCheck = restaurante.horarios.slice();
-        }) 
-        it("Cuando se reserva un horario de un restaurant, el horario correspondiente se elimina del arreglo.", function(){
-            
+        })
+        it("Cuando se reserva un horario de un restaurant, el horario correspondiente se elimina del arreglo.", function () {
             let reservas = horariosCheck[0];
             restaurante.reservarHorario(reservas);
-            expect(horarios).to.not.have.length(horariosCheck.length);
+            expect(restaurante.horarios).to.not.have.length(horariosCheck.length);
+        })
 
-        
-        })    
-
-        it("Cuando se reserva un horario que el restaurant no posee, el arreglo se mantiene igual.", function(){
-                
+        it("Cuando se reserva un horario que el restaurant no posee, el arreglo se mantiene igual.", function () {
             restaurante.reservarHorario("22:22");
-            expect(horarios).to.have.length(horariosCheck.length);
-    
-            })
+            expect(restaurante.horarios).to.have.length(horariosCheck.length);
+        })
 
-
-        it("Cuando se intenta reservar un horario pero no se le pasa ningún parámetro a la función, el arreglo se mantiene igual.", function(){
-                
+        it("Cuando se intenta reservar un horario pero no se le pasa ningún parámetro a la función, el arreglo se mantiene igual.", function () {
             restaurante.reservarHorario("");
-            expect(horarios).to.have.length(horariosCheck.length);
-    
-            
-            })
+            expect(restaurante.horarios).to.have.length(horariosCheck.length);
+        })
 
-        it("la cantidad de elementos del arreglo disminuya o no según corresponda.", function(){
+        it("la cantidad de elementos del arreglo disminuya o no según corresponda.", function () {
             restaurante.reservarHorario();
-            expect(horarios).to.eql(horariosCheck);
-    
-            
-            })
-    
+            expect(restaurante.horarios).to.eql(horariosCheck);
+        })
+    });
 
-
-    describe("Obtener Puntuación", function(){
+    describe("Obtener Puntuación", function () {
         var restaurante;
         var promedioOriginal;
 
-        beforeEach(function(){
+        beforeEach(function () {
             restaurante = listaPrueba().restaurantes[0];
-        }) 
-        it("Dado un restaurant con determinadas calificaciones, la puntuación (que es el promedio de ellas) se calcula correctamente.", function(){
-            
-            
+        })
+        it("Dado un restaurant con determinadas calificaciones, la puntuación (que es el promedio de ellas) se calcula correctamente.", function () {
             let promedioControl;
             let calificacionesControl = restaurante.calificaciones.slice();
-            
             promedioControl = calificacionesControl.reduce((anterior, actual) => actual += anterior) / calificacionesControl.length;
-
             promedioOriginal = restaurante.obtenerPuntuacion();
-
             expect(promedioOriginal).to.be.equal(promedioControl);
-        
-        })    
+        })
 
-        it("Dado un restaurant que no tiene ninguna calificación, la puntuación es igual a 0.", function(){
-                
-        restaurante.calificaciones = [];
-        promedioOriginal = restaurante.obtenerPuntuacion();
+        it("Dado un restaurant que no tiene ninguna calificación, la puntuación es igual a 0.", function () {
+            restaurante.calificaciones = [];
+            promedioOriginal = restaurante.obtenerPuntuacion();
+            expect(promedioOriginal).to.be.equal(0);
+        })
+    });
 
-        expect(promedioOriginal).to.be.equal(0);
-    
-            
-            })
+    describe("Calificar Restaurante",function () {
+        var restaurante;
+        var calificacionesOriginal;
+        var calificacion;
 
-    })
+        beforeEach(function(){
+            restaurante = listaPrueba().restaurantes[1];
+            calificacionesOriginal = restaurante.calificaciones;
+            calificacion = 0;
+        })
 
-   })
-})
+        it("La calificación está dentro del rango establecido.", function () {
+            calificacion = 6;
+            restaurante.calificar(calificacion);
+            expect(calificacionesOriginal).to.be.include(calificacion);
+        })
 
+        it("La calificación no sea con número negativo", function () {
+            calificacion = -3;
+            restaurante.calificar(calificacion);
+            expect(calificacionesOriginal).that.does.not.include(calificacion);
+        })
+
+        it("La calificación no sea un número decimal.", function () {
+            calificacion = 3.1;
+            restaurante.calificar(calificacion);
+            expect(calificacionesOriginal).that.does.not.include(calificacion);
+        })
+
+        it("La calificación no sea un string.", function () {
+            calificacion = "abc";
+            restaurante.calificar(calificacion);
+            expect(calificacionesOriginal).that.does.not.include(calificacion);
+        })
+
+    });
+});
+
+describe("Test Lista de Restaurantes", function () {
+    describe("Buscar Restaurante", function (){
+        var idRestaurante;
+        var listadoDeRestaurantes;
+        var restauranteControl;
+        var restaurante;
+
+        beforeEach(function (){
+            listaDeRestaurantes = listaPrueba();
+        });
+
+        it("Encuentra el restaurante por ID.", function (){
+            idRestaurante = 6;
+            restauranteControl =  listaDeRestaurantes.restaurantes[5];
+            restaurante = listaDeRestaurantes.buscarRestaurante(idRestaurante);
+            expect(restaurante.id).to.be.equal(restauranteControl.id);
+        });
+
+        it("Que no encuentre un ID NO registrado.", function (){
+            idRestaurante = 1000;
+            restaurante = listaDeRestaurantes.buscarRestaurante(idRestaurante);
+            expect(restaurante).to.be.eql("No se ha encontrado ningún restaurant");
+        });
+
+        it("Si paso un string que no devuelva nada.", function (){
+            idRestaurante = "abc";
+            restaurante = listaDeRestaurantes.buscarRestaurante(idRestaurante);
+            expect(restaurante).to.be.eql("No se ha encontrado ningún restaurant");
+        });
+
+    });
+
+    describe("Obtener Restaurantes", function () {
+        var listaDeRestaurantes;
+        var listaFinal;
+
+        beforeEach(function(){
+            listaDeRestaurantes = listaPrueba();
+        });
+
+        it("Sin filtro devuelve todo el listado de restaurantes completo.", function (){
+            listaFinal = listaDeRestaurantes.obtenerRestaurantes(null, null, null);
+            expect(listaFinal).to.have.length(24);
+        });
+
+        it("Filtra los restaurantes con el parámetro Rubro", function (){
+            listaFinal = listaDeRestaurantes.obtenerRestaurantes("Pizza", null, null);
+            expect(listaFinal).to.have.length(4);
+        });
+
+        it("Filtra los restaurantes con el parámetro Ciudad", function (){
+            listaFinal = listaDeRestaurantes.obtenerRestaurantes(null, "Berlín", null);
+            expect(listaFinal).to.have.length(5);
+        });
+
+        it("Filtra los restaurantes con el parámetro Horario", function (){
+            listaFinal = listaDeRestaurantes.obtenerRestaurantes(null, null, "13:00");
+            expect(listaFinal).to.have.length(3);
+        });
+
+        it("Filtra los restaurantes con TODOS los parámetros", function (){
+            listaFinal = listaDeRestaurantes.obtenerRestaurantes("Pasta", "Roma", "15:30");
+            expect(listaFinal).to.have.length(2);
+        });
+    });
+});
+
+describe("Test de Reservas", function () {
+
+    describe("Precio Base.", function (){
+        it("Se calclaula el precio base correctamente ",function(){
+            var precioBase = new Reserva(new Date(2020, 1, 10, 05, 00), 8, 350, "DES1").calcularPrecioBase();
+            expect(precioBase).to.equal(2800);
+        })
+    });
+
+    describe("Precio Final.", function (){
+        it("Se calclaula el precio Final correctamente ",function(){
+            var precioBase = new Reserva(new Date(2020, 1, 10, 05, 00), 8, 350, "DES1").precioTotalReserva();
+            expect(precioBase).to.equal(2170);
+        })
+    });
+});
 
     function listaPrueba() {
         let listadoDeRestaurantes = [
