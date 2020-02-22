@@ -170,7 +170,7 @@ describe("Test de Reservas", function () {
     });
 
     describe("Precio Final.", function (){
-        it("Se calclaula el precio Final correctamente ",function(){
+        it("Se calcula el precio Final correctamente ",function(){
             var precioBase = new Reserva(new Date(2020, 1, 10, 05, 00), 8, 350, "DES1").precioTotalReserva();
             expect(precioBase).to.equal(2170);
         })
